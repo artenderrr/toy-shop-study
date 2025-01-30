@@ -1,7 +1,8 @@
+from typing import cast
 from sqlalchemy import select
 from app.database import Session
 from app.models import TagModel, ToyModel
-from app.schemas import ToySchema
+from app.schemas import ToySchema, ToyUpdateFields
 
 
 class TagService:
@@ -58,4 +59,16 @@ class ToyService:
         with Session() as session:
             model = session.get(ToyModel, name)
             session.delete(model)
+            session.commit()
+
+    @staticmethod
+    def update(name: str, update_fields: ToyUpdateFields) -> None:
+        with Session() as session:
+            model = cast(ToyModel, session.get(ToyModel, name))
+            tag_models: list[TagModel] = [
+                cast(TagModel, session.get(TagModel, tag_name))
+                for tag_name in update_fields.tags
+            ]
+            model.price = update_fields.price
+            model.tags = tag_models
             session.commit()

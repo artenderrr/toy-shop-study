@@ -21,13 +21,17 @@ def capitalize_toy_name(name: str) -> str:
     return name.capitalize()
 
 
-class ToySchema(BaseModel):
+class ToyBaseSchema(BaseModel):
+    price: int = Field(gt=0)
+    tags: Annotated[list[str], BeforeValidator(convert_tag_models_to_tag_names)]
+
+class ToySchema(ToyBaseSchema):
     model_config = ConfigDict(
         from_attributes=True,
         arbitrary_types_allowed=True
     )
 
     name: Annotated[str, AfterValidator(capitalize_toy_name)]
-    price: int = Field(gt=0)
 
-    tags: Annotated[list[str], BeforeValidator(convert_tag_models_to_tag_names)]
+class ToyUpdateFields(ToyBaseSchema):
+    pass
