@@ -1,7 +1,7 @@
 from typing import Annotated
-from pydantic import BaseModel, ConfigDict, Field, BeforeValidator
+from pydantic import BaseModel, ConfigDict, Field, BeforeValidator, AfterValidator
 from app.models import TagModel
-from app.dependencies import tag_exists
+from app.dependencies.utils import tag_exists
 
 
 def convert_tag_models_to_tag_names(tags: list[TagModel | str]) -> list[str]:
@@ -17,6 +17,9 @@ def convert_tag_models_to_tag_names(tags: list[TagModel | str]) -> list[str]:
             tag_names.append(tag)
     return tag_names
 
+def capitalize_toy_name(name: str) -> str:
+    return name.capitalize()
+
 
 class ToySchema(BaseModel):
     model_config = ConfigDict(
@@ -24,7 +27,7 @@ class ToySchema(BaseModel):
         arbitrary_types_allowed=True
     )
 
-    name: str
+    name: Annotated[str, AfterValidator(capitalize_toy_name)]
     price: int = Field(gt=0)
 
     tags: Annotated[list[str], BeforeValidator(convert_tag_models_to_tag_names)]

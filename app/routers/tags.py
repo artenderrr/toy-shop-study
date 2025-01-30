@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from app.services import TagService
-from app.dependencies import vacant_tag_name, existing_tag_name
+from app.dependencies.tags import existing_tag_name, vacant_tag_name
 
 
 router = APIRouter(prefix="/tags")

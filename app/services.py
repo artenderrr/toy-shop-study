@@ -40,3 +40,15 @@ class ToyService:
             model = session.get(ToyModel, name)
             toy = ToySchema.model_validate(model)
         return toy
+    
+    @staticmethod
+    def add(toy: ToySchema) -> None:
+        with Session() as session:
+            tag_models = [session.get(TagModel, tag_name) for tag_name in toy.tags]
+            toy_model = ToyModel(
+                name=toy.name,
+                price=toy.price,
+                tags=tag_models
+            )
+            session.add(toy_model)
+            session.commit()
