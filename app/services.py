@@ -52,3 +52,10 @@ class ToyService:
             )
             session.add(toy_model)
             session.commit()
+
+    @staticmethod
+    def delete(name: str) -> None:
+        with Session() as session:
+            model = session.get(ToyModel, name)
+            session.delete(model)
+            session.commit()

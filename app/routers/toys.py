@@ -27,6 +27,6 @@ def add_toy(toy: Annotated[ToySchema, Depends(toy_with_vacant_name)]) -> ToySche
 def update_toy(name: str) -> None:
     pass
 
-@router.delete("/{name}")
-def delete_toy(name: str) -> None:
-    pass
+@router.delete("/{name}", status_code=204)
+def delete_toy(name: Annotated[str, Depends(existing_toy_name)]) -> None:
+    ToyService.delete(name)
